@@ -60,24 +60,46 @@ export const createProduct = async (payload) => {
     image,
   } = payload;
 
+  // ✅ ป้องกัน undefined → แปลงเป็น null
+  const safeQrCode = qrCode ?? null;
+  const safeName = name ?? null;
+  const safeCategory = category ?? null;
+  const safeAssetCode = assetCode ?? null;
+  const safeImportDate = importDate ?? null;
+  const safeQuantity = quantity ?? 0;
+  const safeUnit = unit ?? null;
+  const safeImage = image ?? null;
+
   const connection = await getConnection();
   try {
     await connection.beginTransaction();
+
     const [result] = await connection.execute(
       `INSERT INTO products
         (qr_code, name, category, asset_code, import_date, quantity, unit, image, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-      [qrCode, name, category, assetCode, importDate, quantity, unit, image],
+      [
+        safeQrCode,
+        safeName,
+        safeCategory,
+        safeAssetCode,
+        safeImportDate,
+        safeQuantity,
+        safeUnit,
+        safeImage,
+      ],
     );
-    const inserted = await connection.execute(
+
+    const [inserted] = await connection.execute(
       `SELECT id, qr_code, name, category, asset_code, import_date, quantity, unit,
               image, created_at, updated_at
        FROM products
        WHERE id = ?`,
       [result.insertId],
     );
+
     await connection.commit();
-    return inserted[0][0];
+    return inserted[0];
   } catch (error) {
     await connection.rollback();
     throw error;
@@ -85,6 +107,7 @@ export const createProduct = async (payload) => {
     connection.release();
   }
 };
+
 
 export const updateProduct = async (id, payload) => {
   const fields = [];
