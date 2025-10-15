@@ -1,0 +1,24 @@
+# Dependencies
+backend/node_modules
+frontend/node_modules
+
+# Logs
+*.log
+npm-debug.log*
+
+# Builds
+frontend/dist
+backend/coverage
+frontend/coverage
+
+# Environment
+.env
+backend/.env
+frontend/.env
+
+# Generated assets
+backend/uploads/images/*
+backend/uploads/qrcodes/*
+backend/exports/*
+
+!.gitkeep

@@ -1,0 +1,35 @@
+{
+  "name": "velocestock-backend",
+  "version": "1.0.0",
+  "description": "Express API for VeloceStock inventory management",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "eslint . --ext .js",
+    "test": "jest --runInBand",
+    "export:excel": "node scripts/exportExcel.js",
+    "export:pdf": "node scripts/exportPdf.js",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.9.7",
+    "pdfkit": "^0.13.0",
+    "qrcode": "^1.5.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "supertest": "^6.3.4"
+  }
+}
