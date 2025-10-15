@@ -1,0 +1,131 @@
+คุณคือผู้ช่วยนักพัฒนา (Full-Stack Developer)
+โปรดสร้างระบบเว็บแอปพลิเคชันตามรายละเอียดด้านล่างนี้ให้ครบทุกฟีเจอร์
+ใช้เทคโนโลยีดังนี้:
+
+Frontend: React (Vite) + TailwindCSS
+Backend: Node.js (Express.js)
+Database: MySQL
+Deployment: Nginx + PM2 (Server ภายใน LAN)
+QR Code: ใช้ไลบรารี qrcode เพื่อสร้าง QR Code เฉพาะของสินค้า
+Export: ใช้ exceljs และ pdfkit เพื่อสร้างรายงาน
+ระบบต้องพร้อมรันได้จริง มีโครงสร้างไฟล์ชัดเจน และมี API ครบถ้วนตาม PRD ด้านล่าง
+พร้อมหน้า UI เบื้องต้น (Dashboard, Products, Reports)
+
+สร้างระบบบริหารจัดการ สินค้าและอะไหล่ภายในบริษัท
+ให้สามารถ:
+เพิ่ม แก้ไข ลบ และค้นหาสินค้าได้
+แสดงข้อมูลสต็อกและรายการเคลื่อนไหว
+สร้าง QR Code เฉพาะสินค้าแต่ละชิ้น (Unique) เพื่อรองรับการสแกนเบิกในอนาคต
+ออกรายงานสรุปเป็น Excel / PDF ได้
+ใช้งานภายในเครือข่าย LAN ของบริษัท
+
+| ส่วน        | เทคโนโลยี                  | หมายเหตุ                          |
+| ----------- | -------------------------- | --------------------------------- |
+| Frontend    | React (Vite) + TailwindCSS | UI สวย ทันสมัย ใช้งานง่าย         |
+| Backend     | Node.js (Express.js)       | API หลัก เชื่อมต่อฐานข้อมูล       |
+| Database    | MySQL                      | เก็บข้อมูลสินค้าและประวัติการเบิก |
+| QR Code     | ไลบรารี `qrcode`           | สร้างภาพ QR เฉพาะสินค้า           |
+| File Upload | `multer`                   | สำหรับอัปโหลดรูปสินค้า            |
+| Export      | `exceljs`, `pdfkit`        | สำหรับสร้างรายงาน                 |
+| Deployment  | Nginx + PM2                | ใช้รันระบบใน server ภายใน         |
+
+ฟีเจอร์หลัก
+หมวด	รายละเอียด
+1. Dashboard	แสดงสรุปจำนวนสินค้าทั้งหมด, สินค้าใกล้หมด, รายการเพิ่มล่าสุด
+2. การจัดการสินค้า (Products CRUD)	เพิ่ม / แก้ไข / ลบ / ดูสินค้า โดยระบุ:
+- ชื่อสินค้า
+- ประเภทสินค้า
+- หมายเลขพัสดุ
+- วันที่นำเข้า
+- จำนวนคงเหลือ
+- หน่วยนับ
+- รูปภาพ
+- QR Code เฉพาะ (Unique)
+3. การเบิกสินค้า (Transactions)	เพิ่มรายการเบิก/รับเข้า โดยระบุสินค้า, จำนวน, วันที่, หมายเหตุ
+4. รายงาน (Reports)	สรุปข้อมูลสินค้า, ประวัติการเบิก, สินค้าใกล้หมด
+สามารถดาวน์โหลด Excel / PDF ได้
+5. ค้นหา / กรองข้อมูล	ค้นหาสินค้าตามชื่อ, หมวดหมู่, หมายเลขพัสดุ, วันที่นำเข้า
+6. ระบบ QR Code	สร้าง QR เฉพาะให้ทุกสินค้าที่เพิ่ม เช่น QR-20251015-000123
+และแสดงภาพ QR ในหน้ารายละเอียดสินค้า
+7. (อนาคต)	ระบบเบิกสินค้าด้วยการสแกน QR ผ่านกล้องมือถือหรืออุปกรณ์สแกนเนอร์
+
+โครงสร้างฐานข้อมูล (Database Schema)
+ตาราง products
+ชื่อคอลัมน์	ประเภท	รายละเอียด
+id	INT (PK, AUTO_INCREMENT)	รหัสสินค้า
+qr_code	VARCHAR(50)	รหัส QR เฉพาะ (Unique)
+name	VARCHAR(255)	ชื่อสินค้า
+category	VARCHAR(100)	ประเภทสินค้า
+asset_code	VARCHAR(100)	หมายเลขพัสดุ
+import_date	DATE	วันที่นำเข้า
+quantity	INT	จำนวนคงเหลือ
+unit	VARCHAR(50)	หน่วยนับ
+image	VARCHAR(255)	ชื่อไฟล์ภาพสินค้า
+created_at	DATETIME	วันที่บันทึก
+updated_at	DATETIME	วันที่แก้ไขล่าสุด
+
+ตาราง transactions
+ชื่อคอลัมน์	ประเภท	รายละเอียด
+id	INT (PK, AUTO_INCREMENT)	รหัสรายการ
+product_id	INT (FK → products.id)	อ้างถึงสินค้าที่เบิก
+qr_code	VARCHAR(50)	รหัส QR ของสินค้าที่เบิก
+type	ENUM('IN','OUT')	ประเภท: รับเข้า / เบิกออก
+quantity	INT	จำนวน
+note	TEXT	หมายเหตุ
+created_at	DATETIME	วันที่บันทึก
+
+โครงสร้างไฟล์ระบบ
+VeloceStock/
+├── backend/
+│   ├── index.js
+│   ├── routes/
+│   │   ├── products.js
+│   │   └── transactions.js
+│   ├── models/
+│   │   ├── db.js
+│   │   ├── productModel.js
+│   │   └── transactionModel.js
+│   ├── uploads/
+│   │   ├── images/
+│   │   └── qrcodes/
+│   ├── exports/
+│   └── package.json
+│
+├── frontend/
+│   ├── src/
+│   │   ├── pages/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Products.jsx
+│   │   │   └── Reports.jsx
+│   │   ├── components/
+│   │   │   ├── ProductForm.jsx
+│   │   │   └── ProductTable.jsx
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── public/
+│   └── package.json
+│
+├── nginx.conf
+└── README.md
+
+API Specification
+Method	Endpoint	คำอธิบาย
+GET	/api/products	ดึงข้อมูลสินค้าทั้งหมด
+GET	/api/products/:id	ดึงรายละเอียดสินค้า
+POST	/api/products	เพิ่มสินค้าใหม่ (สร้าง QR อัตโนมัติ)
+PUT	/api/products/:id	แก้ไขสินค้า
+DELETE	/api/products/:id	ลบสินค้า
+GET	/api/products/:id/qrcode	ดาวน์โหลดไฟล์ QR
+GET	/api/transactions	ดูประวัติการเบิก-รับเข้า
+POST	/api/transactions	เพิ่มรายการเบิก/รับเข้า
+GET	/api/export/excel	ดาวน์โหลดรายงาน Excel
+GET	/api/export/pdf	ดาวน์โหลดรายงาน PDF
+
+User Flow
+เพิ่มสินค้าใหม่ → ระบบสร้าง QR Code เฉพาะ
+ดูรายการสินค้า → เห็น QR Code แต่ละรายการ
+บันทึกรายการเบิก → ลดจำนวนคงเหลือในสินค้า
+สร้างรายงาน → ดาวน์โหลด Excel/PDF
+(อนาคต) → สแกน QR เพื่อเบิกสินค้าโดยอัตโนมัติ
+
+// ตาม PRD.md สร้างโครงสร้าง Express + React สำหรับระบบ Veloce Stock
