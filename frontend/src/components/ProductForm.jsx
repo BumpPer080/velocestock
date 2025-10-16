@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { FiImage, FiSave, FiX } from 'react-icons/fi';
 
 const defaultValues = {
   name: '',
@@ -9,15 +10,17 @@ const defaultValues = {
   unit: '',
 };
 
+const createDefaultValues = () => ({ ...defaultValues });
+
 function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
-  const [values, setValues] = useState(defaultValues);
+  const [values, setValues] = useState(() => createDefaultValues());
   const [image, setImage] = useState(null);
 
   useEffect(() => {
     if (initialValues) {
-      setValues({ ...defaultValues, ...initialValues });
+      setValues({ ...createDefaultValues(), ...initialValues });
     } else {
-      setValues(defaultValues);
+      setValues(createDefaultValues());
     }
   }, [initialValues]);
 
@@ -36,94 +39,140 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col text-sm text-slate-600">
-          Name
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2">
+        <label className="form-control w-full">
+          <span className="label">
+            <span className="label-text font-semibold uppercase tracking-wide text-base-content">
+              Name
+            </span>
+          </span>
           <input
             name="name"
             value={values.name}
             onChange={handleChange}
             required
-            className="mt-1 rounded-md border border-slate-300 px-3 py-2 focus:border-primary focus:outline-none"
+            className="input input-bordered input-primary w-full bg-base-100"
+            placeholder="E.g. Thermal printer"
           />
         </label>
-        <label className="flex flex-col text-sm text-slate-600">
-          Category
+        <label className="form-control w-full">
+          <span className="label">
+            <span className="label-text font-semibold uppercase tracking-wide text-base-content">
+              Category
+            </span>
+          </span>
           <input
             name="category"
             value={values.category}
             onChange={handleChange}
             required
-            className="mt-1 rounded-md border border-slate-300 px-3 py-2 focus:border-primary focus:outline-none"
+            className="input input-bordered input-primary w-full bg-base-100"
+            placeholder="E.g. Accessories"
           />
         </label>
-        <label className="flex flex-col text-sm text-slate-600">
-          Asset Code
+        <label className="form-control w-full">
+          <span className="label">
+            <span className="label-text font-semibold uppercase tracking-wide text-base-content">
+              Asset Code
+            </span>
+            <span className="label-text-alt text-base-content/60">Matches QR code</span>
+          </span>
           <input
             name="assetCode"
             value={values.assetCode}
             onChange={handleChange}
             required
-            className="mt-1 rounded-md border border-slate-300 px-3 py-2 focus:border-primary focus:outline-none"
+            className="input input-bordered input-primary w-full bg-base-100"
+            placeholder="E.g. VS-AC-004"
           />
         </label>
-        <label className="flex flex-col text-sm text-slate-600">
-          Import Date
+        <label className="form-control w-full">
+          <span className="label">
+            <span className="label-text font-semibold uppercase tracking-wide text-base-content">
+              Import Date
+            </span>
+          </span>
           <input
             type="date"
             name="importDate"
             value={values.importDate}
             onChange={handleChange}
-            className="mt-1 rounded-md border border-slate-300 px-3 py-2 focus:border-primary focus:outline-none"
+            className="input input-bordered input-primary w-full bg-base-100"
           />
         </label>
-        <label className="flex flex-col text-sm text-slate-600">
-          Quantity
+        <label className="form-control w-full">
+          <span className="label">
+            <span className="label-text font-semibold uppercase tracking-wide text-base-content">
+              Quantity
+            </span>
+          </span>
           <input
             type="number"
             name="quantity"
             value={values.quantity}
             onChange={handleChange}
             min="0"
-            className="mt-1 rounded-md border border-slate-300 px-3 py-2 focus:border-primary focus:outline-none"
+            className="input input-bordered input-primary w-full bg-base-100"
           />
         </label>
-        <label className="flex flex-col text-sm text-slate-600">
-          Unit
+        <label className="form-control w-full">
+          <span className="label">
+            <span className="label-text font-semibold uppercase tracking-wide text-base-content">Unit</span>
+            <span className="label-text-alt text-base-content/60">Pieces, boxes, etc.</span>
+          </span>
           <input
             name="unit"
             value={values.unit}
             onChange={handleChange}
-            className="mt-1 rounded-md border border-slate-300 px-3 py-2 focus:border-primary focus:outline-none"
+            className="input input-bordered input-primary w-full bg-base-100"
           />
         </label>
       </div>
-      <label className="flex flex-col text-sm text-slate-600">
-        Image
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="mt-1 text-sm text-slate-500"
-        />
+      <label className="form-control w-full">
+        <span className="label">
+          <span className="label-text font-semibold uppercase tracking-wide text-base-content">
+            Product Image
+          </span>
+          <span className="label-text-alt text-base-content/60">Optional</span>
+        </span>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <FiImage className="text-2xl text-primary" />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="file-input file-input-bordered file-input-sm file-input-primary max-w-xs"
+          />
+        </div>
       </label>
-      <div className="flex justify-end gap-2">
+      <div className="flex flex-wrap justify-end gap-3 pt-2">
         {onCancel && (
           <button
             type="button"
-            className="rounded-md border border-slate-300 px-4 py-2 text-sm text-slate-600 hover:bg-slate-100"
+            className="btn btn-ghost btn-sm gap-2 text-base-content/80"
             onClick={onCancel}
           >
+            <FiX className="text-base" />
             Cancel
           </button>
         )}
         <button
           type="submit"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-light disabled:opacity-60"
+          className="btn btn-primary btn-sm gap-2 uppercase tracking-wide disabled:opacity-60"
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Saving…' : 'Save Product'}
+          {isSubmitting ? (
+            <>
+              <span className="loading loading-spinner loading-xs" />
+              Saving…
+            </>
+          ) : (
+            <>
+              <FiSave className="text-base" />
+              Save Product
+            </>
+          )}
         </button>
       </div>
     </form>
@@ -131,4 +180,3 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
 }
 
 export default ProductForm;
-

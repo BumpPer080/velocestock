@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { FiAlertTriangle, FiBox, FiRefreshCw } from 'react-icons/fi';
 import axios from 'axios';
 
 const initialState = {
@@ -30,63 +31,111 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <section>
-        <h2 className="text-lg font-semibold text-slate-700">Overview</h2>
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-lg bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">Total Products</p>
-            <p className="mt-2 text-2xl font-bold text-slate-800">{summary.totalProducts}</p>
+    <div className="space-y-8">
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-3xl font-black uppercase tracking-wide text-base-content">Overview</h2>
+            <p className="text-sm text-base-content/70">
+              Quick pulse of inventory health for the orange &amp; black crew.
+            </p>
           </div>
-          <div className="rounded-lg bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">Low Stock Items</p>
-            <p className="mt-2 text-2xl font-bold text-amber-600">{summary.lowStockItems}</p>
+          {isLoading && (
+            <span className="badge badge-lg border-primary bg-primary/10 text-primary">
+              <span className="loading loading-spinner loading-xs" />
+              Syncing
+            </span>
+          )}
+        </div>
+        {error && (
+          <div role="alert" className="alert alert-error border border-error/20 bg-error/10 text-error-content">
+            <FiAlertTriangle className="text-xl" />
+            <span>{error}</span>
           </div>
-          <div className="rounded-lg bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">Status</p>
-            <p className="mt-2 text-2xl font-bold text-primary">{isLoading ? 'Loading…' : 'Updated'}</p>
-          </div>
+        )}
+        <div className="grid gap-4 md:grid-cols-3">
+          <article className="card bg-base-100 shadow-xl shadow-primary/10">
+            <div className="card-body flex-row items-center justify-between">
+              <div>
+                <p className="text-sm uppercase tracking-wide text-base-content/60">
+                  Total Products
+                </p>
+                <p className="mt-2 text-3xl font-extrabold text-base-content">{summary.totalProducts}</p>
+              </div>
+              <div className="btn btn-circle btn-primary btn-outline border-2 border-primary text-primary">
+                <FiBox className="text-xl" />
+              </div>
+            </div>
+          </article>
+          <article className="card bg-base-100 shadow-xl shadow-warning/10">
+            <div className="card-body flex-row items-center justify-between">
+              <div>
+                <p className="text-sm uppercase tracking-wide text-base-content/60">
+                  Low Stock Items
+                </p>
+                <p className="mt-2 text-3xl font-extrabold text-warning">{summary.lowStockItems}</p>
+              </div>
+              <div className="btn btn-circle border-2 border-warning/60 bg-warning/10 text-warning">
+                <FiAlertTriangle className="text-xl" />
+              </div>
+            </div>
+          </article>
+          <article className="card bg-base-100 shadow-xl shadow-primary/10">
+            <div className="card-body flex-row items-center justify-between">
+              <div>
+                <p className="text-sm uppercase tracking-wide text-base-content/60">Status</p>
+                <p className="mt-2 text-3xl font-extrabold text-primary">
+                  {isLoading ? 'Loading…' : 'Up to date'}
+                </p>
+              </div>
+              <div className="btn btn-circle border-2 border-primary/60 bg-primary/10 text-primary">
+                <FiRefreshCw className="text-xl" />
+              </div>
+            </div>
+          </article>
         </div>
       </section>
-      <section>
-        <h2 className="text-lg font-semibold text-slate-700">Recent Products</h2>
-        <div className="mt-4 overflow-hidden rounded-lg bg-white shadow-sm">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
-              <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                  Name
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                  Quantity
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                  Added On
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {summary.recentProducts.length === 0 && (
-                <tr>
-                  <td className="px-4 py-3 text-sm text-slate-500" colSpan={3}>
-                    No products recorded yet.
-                  </td>
+      <section className="card border border-base-300 bg-base-100 shadow-lg shadow-base-300/40">
+        <div className="card-body space-y-4 p-0">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-base-300 px-6 py-4">
+            <h2 className="text-xl font-semibold uppercase tracking-wide text-base-content">
+              Recent Products
+            </h2>
+            <div className="badge badge-outline border-primary/40 text-primary">
+              Last {summary.recentProducts.length || 0} arrivals
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="table table-zebra table-pin-rows">
+              <thead>
+                <tr className="text-xs uppercase tracking-wide text-base-content/70">
+                  <th className="bg-base-200">Name</th>
+                  <th className="bg-base-200">Quantity</th>
+                  <th className="bg-base-200">Added On</th>
                 </tr>
-              )}
-              {summary.recentProducts.map((product) => (
-                <tr key={product.id}>
-                  <td className="px-4 py-3 text-sm text-slate-700">{product.name}</td>
-                  <td className="px-4 py-3 text-sm text-slate-700">
-                    {product.quantity} {product.unit}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-slate-500">
-                    {new Date(product.created_at).toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {summary.recentProducts.length === 0 && (
+                  <tr>
+                    <td className="py-6 text-center text-sm text-base-content/60" colSpan={3}>
+                      No products recorded yet.
+                    </td>
+                  </tr>
+                )}
+                {summary.recentProducts.map((product) => (
+                  <tr key={product.id}>
+                    <td className="font-medium text-base-content/90">{product.name}</td>
+                    <td className="text-base-content/80">
+                      {product.quantity} {product.unit}
+                    </td>
+                    <td className="text-base-content/60">
+                      {new Date(product.created_at).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
     </div>
@@ -94,4 +143,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { FiAlertCircle, FiCheckCircle, FiFilter, FiRotateCcw, FiSearch } from 'react-icons/fi';
 import axios from 'axios';
 import ProductForm from '../components/ProductForm.jsx';
 import ProductTable from '../components/ProductTable.jsx';
@@ -24,8 +25,8 @@ function Products() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = useMemo(() => {
-    const set = new Set(products.map((item) => item.category).filter(Boolean));
-    return Array.from(set);
+    const bucket = new Set(products.map((item) => item.category).filter(Boolean));
+    return Array.from(bucket);
   }, [products]);
 
   const fetchProducts = async (params = {}) => {
@@ -115,33 +116,63 @@ function Products() {
   };
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-lg bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-700">
-          {editingProduct ? 'Edit Product' : 'Add Product'}
-        </h2>
-        <ProductForm
-          initialValues={editingProduct}
-          onSubmit={handleUpsertProduct}
-          onCancel={editingProduct ? () => setEditingProduct(null) : undefined}
-          isSubmitting={isSubmitting}
-        />
+    <div className="space-y-8">
+      <section className="card border border-base-300 bg-base-100 shadow-xl shadow-base-300/40">
+        <div className="card-body space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-black uppercase tracking-wide text-base-content">
+                {editingProduct ? 'Update Product' : 'Add Product'}
+              </h2>
+              <p className="text-sm text-base-content/70">
+                Upload new items and keep your asset codes in sync with ease.
+              </p>
+            </div>
+            {editingProduct && (
+              <span className="badge badge-warning badge-outline gap-2 border-warning border-opacity-60 text-warning">
+                Editing #{editingProduct.assetCode || editingProduct.id}
+              </span>
+            )}
+          </div>
+          <ProductForm
+            initialValues={editingProduct}
+            onSubmit={handleUpsertProduct}
+            onCancel={editingProduct ? () => setEditingProduct(null) : undefined}
+            isSubmitting={isSubmitting}
+          />
+        </div>
       </section>
-      <section className="rounded-lg bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg font-semibold text-slate-700">Inventory</h2>
-          <form onSubmit={handleFilter} className="flex flex-wrap items-center gap-2">
-            <input
-              type="search"
-              placeholder="Search name or asset code"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              className="rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
-            />
+      <section className="card border border-base-300 bg-base-100 shadow-xl shadow-base-300/40">
+        <div className="card-body space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-black uppercase tracking-wide text-base-content">Inventory</h2>
+              <p className="text-sm text-base-content/70">
+                Filter by name, asset code, or category to spot stock shifts fast.
+              </p>
+            </div>
+            <span className="badge badge-outline border-primary border-opacity-40 text-primary">
+              {products.length} results
+            </span>
+          </div>
+          <form
+            onSubmit={handleFilter}
+            className="grid w-full gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto_auto]"
+          >
+            <label className="input input-bordered flex items-center gap-2 bg-base-100">
+              <FiSearch className="text-primary" />
+              <input
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search name or asset code"
+                className="w-full bg-transparent focus:outline-none"
+              />
+            </label>
             <select
               value={category}
               onChange={(event) => setCategory(event.target.value)}
-              className="rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-primary focus:outline-none"
+              className="select select-bordered bg-base-100"
             >
               <option value="">All categories</option>
               {categories.map((item) => (
@@ -150,39 +181,55 @@ function Products() {
                 </option>
               ))}
             </select>
-            <button
-              type="submit"
-              className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-light"
-            >
+            <button type="submit" className="btn btn-primary gap-2 uppercase tracking-wide">
+              <FiFilter className="text-base" />
               Apply
             </button>
             <button
               type="button"
               onClick={handleResetFilters}
-              className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-600 hover:bg-slate-100"
+              className="btn btn-ghost gap-2 uppercase tracking-wide text-base-content/80"
             >
+              <FiRotateCcw className="text-base" />
               Reset
             </button>
           </form>
+          {error && (
+            <div
+              role="alert"
+              className="alert alert-error border border-error border-opacity-20 bg-error/10 text-error-content"
+            >
+              <FiAlertCircle className="text-xl" />
+              <span>{error}</span>
+            </div>
+          )}
+          {success && (
+            <div
+              role="alert"
+              className="alert alert-success border border-success border-opacity-20 bg-success/10 text-success-content"
+            >
+              <FiCheckCircle className="text-xl" />
+              <span>{success}</span>
+            </div>
+          )}
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <span className="loading loading-ring loading-lg text-primary" />
+            </div>
+          ) : (
+            <div className="mt-2">
+              <ProductTable
+                products={products}
+                onEdit={handleEditProduct}
+                onDelete={handleDeleteProduct}
+                onViewQr={handleViewQr}
+              />
+            </div>
+          )}
         </div>
-        {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
-        {success && <p className="mt-4 text-sm text-emerald-600">{success}</p>}
-        {isLoading ? (
-          <p className="mt-6 text-sm text-slate-500">Loading products…</p>
-        ) : (
-          <div className="mt-6">
-            <ProductTable
-              products={products}
-              onEdit={handleEditProduct}
-              onDelete={handleDeleteProduct}
-              onViewQr={handleViewQr}
-            />
-          </div>
-        )}
       </section>
     </div>
   );
 }
 
 export default Products;
-

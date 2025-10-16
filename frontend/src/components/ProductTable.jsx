@@ -1,61 +1,68 @@
+import { FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { RiQrScan2Line } from 'react-icons/ri';
+
 function ProductTable({ products, onEdit, onDelete, onViewQr }) {
   return (
-    <div className="overflow-hidden rounded-lg bg-white shadow-sm">
-      <table className="min-w-full divide-y divide-slate-200">
-        <thead className="bg-slate-50">
-          <tr>
-            <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Name</th>
-            <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-              Category
-            </th>
-            <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-              Quantity
-            </th>
-            <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-              Asset Code
-            </th>
-            <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-              Actions
-            </th>
+    <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100 shadow-lg shadow-base-300/40">
+      <table className="table table-zebra">
+        <thead>
+          <tr className="text-xs uppercase tracking-wide text-base-content/70">
+            <th>Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Asset Code</th>
+            <th className="text-right">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200">
+        <tbody>
           {products.length === 0 && (
             <tr>
-              <td className="px-4 py-3 text-sm text-slate-500" colSpan={5}>
+              <td className="py-6 text-center text-sm text-base-content/60" colSpan={5}>
                 No products match your filters.
               </td>
             </tr>
           )}
           {products.map((product) => (
             <tr key={product.id}>
-              <td className="px-4 py-3 text-sm text-slate-700">{product.name}</td>
-              <td className="px-4 py-3 text-sm text-slate-700">{product.category}</td>
-              <td className="px-4 py-3 text-sm text-slate-700">
-                {product.quantity} {product.unit}
+              <td className="font-semibold text-base-content">{product.name}</td>
+              <td>
+                <span className="badge badge-outline border-secondary border-opacity-30 bg-base-100 text-base-content">
+                  {product.category || '—'}
+                </span>
               </td>
-              <td className="px-4 py-3 text-sm text-slate-500">{product.asset_code}</td>
-              <td className="px-4 py-3 text-sm text-slate-500">
-                <div className="flex flex-wrap gap-2">
+              <td>
+                <span className="badge badge-primary badge-outline gap-1 text-primary">
+                  {product.quantity} {product.unit}
+                </span>
+              </td>
+              <td className="font-mono text-sm text-base-content/70">{product.asset_code}</td>
+              <td>
+                <div className="flex justify-end gap-2">
                   <button
                     type="button"
-                    className="rounded-md border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-100"
+                    className="btn btn-outline btn-xs gap-1 border-primary border-opacity-60 text-primary"
                     onClick={() => onViewQr(product)}
+                    aria-label={`View QR for ${product.name}`}
                   >
+                    <RiQrScan2Line className="text-sm" />
                     QR
                   </button>
                   <button
                     type="button"
-                    className="rounded-md border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-100"
+                    className="btn btn-ghost btn-xs gap-1 text-base-content/80"
                     onClick={() => onEdit(product)}
+                    aria-label={`Edit ${product.name}`}
                   >
+                    <FiEdit2 className="text-sm" />
                     Edit
                   </button>
                   <button
                     type="button"
-                    className="rounded-md border border-rose-200 px-3 py-1 text-xs text-rose-600 hover:bg-rose-50"
+                    className="btn btn-outline btn-xs gap-1 border-error border-opacity-50 text-error"
                     onClick={() => onDelete(product)}
+                    aria-label={`Delete ${product.name}`}
                   >
+                    <FiTrash2 className="text-sm" />
                     Delete
                   </button>
                 </div>
@@ -69,4 +76,3 @@ function ProductTable({ products, onEdit, onDelete, onViewQr }) {
 }
 
 export default ProductTable;
-
