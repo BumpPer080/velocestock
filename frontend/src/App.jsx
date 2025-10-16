@@ -15,7 +15,7 @@ function App() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <h1 className="text-xl font-semibold text-primary">VeloceStock</h1>
           <nav className="flex items-center gap-2">
-            <NavLink to="/" className={navLinkClasses} end>
+            <NavLink to="/" className={navLinkClasses} end> 
               Dashboard
             </NavLink>
             <NavLink to="/products" className={navLinkClasses}>

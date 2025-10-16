@@ -54,6 +54,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
             name="category"
             value={values.category}
             onChange={handleChange}
+            required
             className="mt-1 rounded-md border border-slate-300 px-3 py-2 focus:border-primary focus:outline-none"
           />
         </label>
@@ -63,6 +64,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
             name="assetCode"
             value={values.assetCode}
             onChange={handleChange}
+            required
             className="mt-1 rounded-md border border-slate-300 px-3 py-2 focus:border-primary focus:outline-none"
           />
         </label>
