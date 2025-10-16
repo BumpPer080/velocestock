@@ -44,7 +44,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
         <label className="form-control w-full">
           <span className="label">
             <span className="label-text font-semibold uppercase tracking-wide text-base-content">
-              Name
+              ชื่อสินค้า
             </span>
           </span>
           <input
@@ -53,13 +53,13 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
             onChange={handleChange}
             required
             className="input input-bordered input-primary w-full bg-base-100"
-            placeholder="E.g. Thermal printer"
+            placeholder="จอภาพ 24 นิ้ว"
           />
         </label>
         <label className="form-control w-full">
           <span className="label">
             <span className="label-text font-semibold uppercase tracking-wide text-base-content">
-              Category
+              หมวดหมู่
             </span>
           </span>
           <input
@@ -68,15 +68,15 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
             onChange={handleChange}
             required
             className="input input-bordered input-primary w-full bg-base-100"
-            placeholder="E.g. Accessories"
+            placeholder="อุปกรณ์คอมพิวเตอร์"
           />
         </label>
         <label className="form-control w-full">
           <span className="label">
             <span className="label-text font-semibold uppercase tracking-wide text-base-content">
-              Asset Code
+              รหัสครุภัณฑ์
             </span>
-            <span className="label-text-alt text-base-content/60">Matches QR code</span>
+            <span className="label-text-alt text-base-content/60">เพื่อนำไปเพิ่ม Qr Code</span>
           </span>
           <input
             name="assetCode"
@@ -84,13 +84,13 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
             onChange={handleChange}
             required
             className="input input-bordered input-primary w-full bg-base-100"
-            placeholder="E.g. VS-AC-004"
+            placeholder="TV-1234567890"
           />
         </label>
         <label className="form-control w-full">
           <span className="label">
             <span className="label-text font-semibold uppercase tracking-wide text-base-content">
-              Import Date
+              วันที่นำเข้าสินค้า
             </span>
           </span>
           <input
@@ -104,7 +104,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
         <label className="form-control w-full">
           <span className="label">
             <span className="label-text font-semibold uppercase tracking-wide text-base-content">
-              Quantity
+              จำนวนสินค้าที่นำเข้า
             </span>
           </span>
           <input
@@ -118,8 +118,8 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
         </label>
         <label className="form-control w-full">
           <span className="label">
-            <span className="label-text font-semibold uppercase tracking-wide text-base-content">Unit</span>
-            <span className="label-text-alt text-base-content/60">Pieces, boxes, etc.</span>
+            <span className="label-text font-semibold uppercase tracking-wide text-base-content">หน่วยนับ</span>
+            <span className="label-text-alt text-base-content/60">ชิ้นหรือกล่อง เป็นต้น.</span>
           </span>
           <input
             name="unit"
@@ -154,7 +154,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
             onClick={onCancel}
           >
             <FiX className="text-base" />
-            Cancel
+            ยกเลิก
           </button>
         )}
         <button
@@ -170,7 +170,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
           ) : (
             <>
               <FiSave className="text-base" />
-              Save Product
+              เพิ่มสินค้าใหม่
             </>
           )}
         </button>

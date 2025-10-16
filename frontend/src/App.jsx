@@ -88,8 +88,8 @@ function App() {
       </main>
       <footer className="border-t border-base-300 bg-base-100 py-6 text-sm text-base-content/70">
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-2 px-4 text-center sm:flex-row sm:text-left">
-          <span>© {new Date().getFullYear()} VeloceStock. Inventory .</span>
-          <span className="uppercase tracking-widest text-primary">Built with DaisyUI + React Icons</span>
+          <span>© {new Date().getFullYear()} VeloceStock Inventory .</span>
+          <span className="uppercase tracking-widest text-primary">Bostech Innovation company limited</span>
         </div>
       </footer>
     </div>

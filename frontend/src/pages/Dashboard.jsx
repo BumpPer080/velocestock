@@ -35,15 +35,15 @@ function Dashboard() {
       <section className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-3xl font-black uppercase tracking-wide text-base-content">Overview</h2>
+            <h2 className="text-3xl font-black uppercase tracking-wide text-base-content">สรุปภาพรวมของคลังอะไหล่</h2>
             <p className="text-sm text-base-content/70">
-              Quick pulse of inventory health for the orange &amp; black crew.
+              สรุปข้อมูลล่าสุด ณ วันที่ {new Date().toLocaleDateString()}
             </p>
           </div>
           {isLoading && (
             <span className="badge badge-lg border-primary bg-primary/10 text-primary">
               <span className="loading loading-spinner loading-xs" />
-              Syncing
+              Loading...
             </span>
           )}
         </div>
@@ -58,7 +58,7 @@ function Dashboard() {
             <div className="card-body flex-row items-center justify-between">
               <div>
                 <p className="text-sm uppercase tracking-wide text-base-content/60">
-                  Total Products
+                  จำนวนสินค้าในคลัง
                 </p>
                 <p className="mt-2 text-3xl font-extrabold text-base-content">{summary.totalProducts}</p>
               </div>
@@ -71,7 +71,7 @@ function Dashboard() {
             <div className="card-body flex-row items-center justify-between">
               <div>
                 <p className="text-sm uppercase tracking-wide text-base-content/60">
-                  Low Stock Items
+                  สินค้าคงเหลือต่ำกว่าเกณฑ์
                 </p>
                 <p className="mt-2 text-3xl font-extrabold text-warning">{summary.lowStockItems}</p>
               </div>
@@ -83,9 +83,9 @@ function Dashboard() {
           <article className="card bg-base-100 shadow-xl shadow-primary/10">
             <div className="card-body flex-row items-center justify-between">
               <div>
-                <p className="text-sm uppercase tracking-wide text-base-content/60">Status</p>
+                <p className="text-sm uppercase tracking-wide text-base-content/60">สถานะ</p>
                 <p className="mt-2 text-3xl font-extrabold text-primary">
-                  {isLoading ? 'Loading…' : 'Up to date'}
+                  {isLoading ? 'Loading…' : 'อัปเดตล่าสุด'}
                 </p>
               </div>
               <div className="btn btn-circle border-2 border-primary/60 bg-primary/10 text-primary">
@@ -99,7 +99,7 @@ function Dashboard() {
         <div className="card-body space-y-4 p-0">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-base-300 px-6 py-4">
             <h2 className="text-xl font-semibold uppercase tracking-wide text-base-content">
-              Recent Products
+              สินค้าใหม่ล่าสุด
             </h2>
             <div className="badge badge-outline border-primary/40 text-primary">
               Last {summary.recentProducts.length || 0} arrivals
@@ -109,16 +109,16 @@ function Dashboard() {
             <table className="table table-zebra table-pin-rows">
               <thead>
                 <tr className="text-xs uppercase tracking-wide text-base-content/70">
-                  <th className="bg-base-200">Name</th>
-                  <th className="bg-base-200">Quantity</th>
-                  <th className="bg-base-200">Added On</th>
+                  <th className="bg-base-200">ชื่อสินค้า</th>
+                  <th className="bg-base-200">จำนวนสินค้าในคลัง</th>
+                  <th className="bg-base-200">วันที่เพิ่ม</th>
                 </tr>
               </thead>
               <tbody>
                 {summary.recentProducts.length === 0 && (
                   <tr>
                     <td className="py-6 text-center text-sm text-base-content/60" colSpan={3}>
-                      No products recorded yet.
+                      ไม่มีสินค้าที่เพิ่มเข้ามาล่าสุด.
                     </td>
                   </tr>
                 )}

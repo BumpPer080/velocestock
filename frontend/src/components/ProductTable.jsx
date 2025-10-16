@@ -7,10 +7,10 @@ function ProductTable({ products, onEdit, onDelete, onViewQr }) {
       <table className="table table-zebra">
         <thead>
           <tr className="text-xs uppercase tracking-wide text-base-content/70">
-            <th>Name</th>
-            <th>Category</th>
-            <th>Quantity</th>
-            <th>Asset Code</th>
+            <th>ชื่อสินค้า</th>
+            <th>หมวดหมู่</th>
+            <th>จำนวนสินค้าในคลัง</th>
+            <th>รหัสครุภัณฑ์</th>
             <th className="text-right">Actions</th>
           </tr>
         </thead>

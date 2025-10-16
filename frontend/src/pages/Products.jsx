@@ -122,15 +122,15 @@ function Products() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-2xl font-black uppercase tracking-wide text-base-content">
-                {editingProduct ? 'Update Product' : 'Add Product'}
+                {editingProduct ? 'อัปเดตสินค้า' : 'เพิ่มสินค้าใหม่'}
               </h2>
               <p className="text-sm text-base-content/70">
-                Upload new items and keep your asset codes in sync with ease.
+                เพิ่มสินค้าใหม่ โดยกรอกข้อมูลให้ครบถ้วนในฟอร์มด้านล่าง (<span className="uppercase tracking-widest text-primary">ไม่จำเป็นต้องใส่รูปภาพ</span>)
               </p>
             </div>
             {editingProduct && (
               <span className="badge badge-warning badge-outline gap-2 border-warning border-opacity-60 text-warning">
-                Editing #{editingProduct.assetCode || editingProduct.id}
+                กำลังแก้ไข #{editingProduct.assetCode || editingProduct.id}
               </span>
             )}
           </div>
@@ -146,13 +146,13 @@ function Products() {
         <div className="card-body space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-black uppercase tracking-wide text-base-content">Inventory</h2>
+              <h2 className="text-2xl font-black uppercase tracking-wide text-base-content">รายการสินค้า</h2>
               <p className="text-sm text-base-content/70">
-                Filter by name, asset code, or category to spot stock shifts fast.
+                สามารถค้นหาสินค้าได้จากชื่อสินค้า รหัสครุภัณฑ์ หรือ กรองตามหมวดหมู่ 
               </p>
             </div>
             <span className="badge badge-outline border-primary border-opacity-40 text-primary">
-              {products.length} results
+              {products.length} รายการ
             </span>
           </div>
           <form
@@ -165,7 +165,7 @@ function Products() {
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search name or asset code"
+                placeholder="ค้นหาสินค้าจากชื่อ หรือ รหัสครุภัณฑ์"
                 className="w-full bg-transparent focus:outline-none"
               />
             </label>
@@ -174,7 +174,7 @@ function Products() {
               onChange={(event) => setCategory(event.target.value)}
               className="select select-bordered bg-base-100"
             >
-              <option value="">All categories</option>
+              <option value="">กรองตามหมวดหมู่</option>
               {categories.map((item) => (
                 <option key={item} value={item}>
                   {item}
@@ -183,7 +183,7 @@ function Products() {
             </select>
             <button type="submit" className="btn btn-primary gap-2 uppercase tracking-wide">
               <FiFilter className="text-base" />
-              Apply
+              ยืนยัน
             </button>
             <button
               type="button"
@@ -191,7 +191,7 @@ function Products() {
               className="btn btn-ghost gap-2 uppercase tracking-wide text-base-content/80"
             >
               <FiRotateCcw className="text-base" />
-              Reset
+              รีเซ็ต
             </button>
           </form>
           {error && (
