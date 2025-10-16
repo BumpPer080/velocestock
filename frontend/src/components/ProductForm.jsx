@@ -22,6 +22,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
     } else {
       setValues(createDefaultValues());
     }
+    setImage(null);
   }, [initialValues]);
 
   const handleChange = (event) => {
@@ -33,9 +34,17 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
     setImage(event.target.files?.[0] ?? null);
   };
 
-  const handleSubmit = (event) => {
+  const resetForm = () => {
+    setValues(createDefaultValues());
+    setImage(null);
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    onSubmit({ ...values, image });
+    const wasSuccessful = await onSubmit({ ...values, image });
+    if (wasSuccessful) {
+      resetForm();
+    }
   };
 
   return (
@@ -53,7 +62,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
             onChange={handleChange}
             required
             className="input input-bordered input-primary w-full bg-base-100"
-            placeholder="จอภาพ 24 นิ้ว"
+            placeholder="E.g. Thermal printer"
           />
         </label>
         <label className="form-control w-full">
@@ -68,15 +77,15 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
             onChange={handleChange}
             required
             className="input input-bordered input-primary w-full bg-base-100"
-            placeholder="อุปกรณ์คอมพิวเตอร์"
+            placeholder="E.g. Accessories"
           />
         </label>
         <label className="form-control w-full">
           <span className="label">
             <span className="label-text font-semibold uppercase tracking-wide text-base-content">
-              รหัสครุภัณฑ์
+              หมวดหมู่
             </span>
-            <span className="label-text-alt text-base-content/60">เพื่อนำไปเพิ่ม Qr Code</span>
+            <span className="label-text-alt text-base-content/60">Matches QR code</span>
           </span>
           <input
             name="assetCode"
@@ -84,13 +93,13 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
             onChange={handleChange}
             required
             className="input input-bordered input-primary w-full bg-base-100"
-            placeholder="TV-1234567890"
+            placeholder="E.g. VS-AC-004"
           />
         </label>
         <label className="form-control w-full">
           <span className="label">
             <span className="label-text font-semibold uppercase tracking-wide text-base-content">
-              วันที่นำเข้าสินค้า
+              วันที่นำเข้า
             </span>
           </span>
           <input
@@ -104,7 +113,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
         <label className="form-control w-full">
           <span className="label">
             <span className="label-text font-semibold uppercase tracking-wide text-base-content">
-              จำนวนสินค้าที่นำเข้า
+              จำนวนสินค้า
             </span>
           </span>
           <input
@@ -118,8 +127,8 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
         </label>
         <label className="form-control w-full">
           <span className="label">
-            <span className="label-text font-semibold uppercase tracking-wide text-base-content">หน่วยนับ</span>
-            <span className="label-text-alt text-base-content/60">ชิ้นหรือกล่อง เป็นต้น.</span>
+            <span className="label-text font-semibold uppercase tracking-wide text-base-content">จำนวนนับ</span>
+            <span className="label-text-alt text-base-content/60">ชิ้น กล่อง แท่ง.</span>
           </span>
           <input
             name="unit"
@@ -132,7 +141,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
       <label className="form-control w-full">
         <span className="label">
           <span className="label-text font-semibold uppercase tracking-wide text-base-content">
-            Product Image
+            รูปภาพสินค้า
           </span>
           <span className="label-text-alt text-base-content/60">Optional</span>
         </span>
@@ -151,7 +160,10 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
           <button
             type="button"
             className="btn btn-ghost btn-sm gap-2 text-base-content/80"
-            onClick={onCancel}
+            onClick={() => {
+              resetForm();
+              onCancel();
+            }}
           >
             <FiX className="text-base" />
             ยกเลิก
@@ -165,7 +177,7 @@ function ProductForm({ initialValues, onSubmit, onCancel, isSubmitting }) {
           {isSubmitting ? (
             <>
               <span className="loading loading-spinner loading-xs" />
-              Saving…
+              กำลังบันทึก…
             </>
           ) : (
             <>

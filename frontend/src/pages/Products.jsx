@@ -61,6 +61,7 @@ function Products() {
     setIsSubmitting(true);
     setError('');
     setSuccess('');
+    let wasSuccessful = false;
     try {
       const formData = new FormData();
       formData.append('name', values.name);
@@ -86,11 +87,13 @@ function Products() {
       }
       setEditingProduct(null);
       await fetchProducts();
+      wasSuccessful = true;
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save product');
     } finally {
       setIsSubmitting(false);
     }
+    return wasSuccessful;
   };
 
   const handleEditProduct = (product) => {
@@ -122,10 +125,10 @@ function Products() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-2xl font-black uppercase tracking-wide text-base-content">
-                {editingProduct ? 'อัปเดตสินค้า' : 'เพิ่มสินค้าใหม่'}
+                {editingProduct ? 'Update Product' : 'เพิ่มสินค้าใหม่'}
               </h2>
               <p className="text-sm text-base-content/70">
-                เพิ่มสินค้าใหม่ โดยกรอกข้อมูลให้ครบถ้วนในฟอร์มด้านล่าง (<span className="uppercase tracking-widest text-primary">ไม่จำเป็นต้องใส่รูปภาพ</span>)
+                เพิ่มสินค้าใหม่ หรือแก้ไขรายละเอียดสินค้าในคลังอะไหล่ของคุณ (<span className="uppercase tracking-widest text-primary">ไม่จำเป็นต้องใส่รูป</span>)
               </p>
             </div>
             {editingProduct && (
@@ -135,6 +138,7 @@ function Products() {
             )}
           </div>
           <ProductForm
+            key={editingProduct?.id ?? 'new'}
             initialValues={editingProduct}
             onSubmit={handleUpsertProduct}
             onCancel={editingProduct ? () => setEditingProduct(null) : undefined}
@@ -146,9 +150,9 @@ function Products() {
         <div className="card-body space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-black uppercase tracking-wide text-base-content">รายการสินค้า</h2>
+              <h2 className="text-2xl font-black uppercase tracking-wide text-base-content">รายการอะไหล่ทั้งหมด</h2>
               <p className="text-sm text-base-content/70">
-                สามารถค้นหาสินค้าได้จากชื่อสินค้า รหัสครุภัณฑ์ หรือ กรองตามหมวดหมู่ 
+               สามารถค้นหาและกรองรายการอะไหล่ได้ตามต้องการ 
               </p>
             </div>
             <span className="badge badge-outline border-primary border-opacity-40 text-primary">
@@ -165,7 +169,7 @@ function Products() {
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="ค้นหาสินค้าจากชื่อ หรือ รหัสครุภัณฑ์"
+                placeholder="ค้นหาสินค้า หรือ หมายเลขครุภัณฑ์"
                 className="w-full bg-transparent focus:outline-none"
               />
             </label>
@@ -174,7 +178,7 @@ function Products() {
               onChange={(event) => setCategory(event.target.value)}
               className="select select-bordered bg-base-100"
             >
-              <option value="">กรองตามหมวดหมู่</option>
+              <option value="">หมวดหมู่</option>
               {categories.map((item) => (
                 <option key={item} value={item}>
                   {item}
