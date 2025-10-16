@@ -106,9 +106,9 @@ function Dashboard() {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="table table-zebra table-pin-rows">
+            <table className="table table-zebra table-pin-rows ">
               <thead>
-                <tr className="text-xs uppercase tracking-wide text-base-content/70">
+                <tr className="text-xs uppercase tracking-wide text-base-content/70 ">
                   <th className="bg-base-200">ชื่อสินค้า</th>
                   <th className="bg-base-200">จำนวนสินค้าในคลัง</th>
                   <th className="bg-base-200">วันที่เพิ่ม</th>
@@ -123,7 +123,7 @@ function Dashboard() {
                   </tr>
                 )}
                 {summary.recentProducts.map((product) => (
-                  <tr key={product.id}>
+                  <tr className='hover:bg-base-300' key={product.id}>
                     <td className="font-medium text-base-content/90">{product.name}</td>
                     <td className="text-base-content/80">
                       {product.quantity} {product.unit}
