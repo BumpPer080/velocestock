@@ -11,13 +11,14 @@ function ProductTable({ products, onEdit, onDelete, onViewQr }) {
             <th>หมวดหมู่</th>
             <th>จำนวนสินค้าในคลัง</th>
             <th>รหัสครุภัณฑ์</th>
+            <th>ผู้บันทึก</th>
             <th className="text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
           {products.length === 0 && (
             <tr>
-              <td className="py-6 text-center text-sm text-base-content/60" colSpan={5}>
+              <td className="py-6 text-center text-sm text-base-content/60" colSpan={6}>
                 No products match your filters.
               </td>
             </tr>
@@ -36,6 +37,9 @@ function ProductTable({ products, onEdit, onDelete, onViewQr }) {
                 </span>
               </td>
               <td className="font-mono text-sm text-base-content/70">{product.asset_code}</td>
+              <td className="text-sm text-base-content/70">
+                {product.created_by_name || product.created_by_username || '—'}
+              </td>
               <td>
                 <div className="flex justify-end gap-2">
                   <button

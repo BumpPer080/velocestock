@@ -5,33 +5,35 @@ export const listProducts = async (filters = {}) => {
   const params = [];
 
   if (filters.search) {
-    clauses.push('(name LIKE ? OR category LIKE ? OR asset_code LIKE ?)');
+    clauses.push('(p.name LIKE ? OR p.category LIKE ? OR p.asset_code LIKE ?)');
     const wildcard = `%${filters.search}%`;
     params.push(wildcard, wildcard, wildcard);
   }
 
   if (filters.category) {
-    clauses.push('category = ?');
+    clauses.push('p.category = ?');
     params.push(filters.category);
   }
 
   if (filters.importDateFrom) {
-    clauses.push('import_date >= ?');
+    clauses.push('p.import_date >= ?');
     params.push(filters.importDateFrom);
   }
 
   if (filters.importDateTo) {
-    clauses.push('import_date <= ?');
+    clauses.push('p.import_date <= ?');
     params.push(filters.importDateTo);
   }
 
   const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
   const sql = `
-    SELECT id, qr_code, name, category, asset_code, import_date, quantity, unit,
-           image, created_at, updated_at
-    FROM products
+    SELECT p.id, p.qr_code, p.name, p.category, p.asset_code, p.import_date, p.quantity, p.unit,
+           p.image, p.created_at, p.updated_at, p.created_by,
+           u.display_name AS created_by_name, u.username AS created_by_username
+    FROM products p
+    LEFT JOIN users u ON u.id = p.created_by
     ${where}
-    ORDER BY created_at DESC
+    ORDER BY p.created_at DESC
   `;
 
   return query(sql, params);
@@ -39,10 +41,12 @@ export const listProducts = async (filters = {}) => {
 
 export const findProductById = async (id) => {
   const rows = await query(
-    `SELECT id, qr_code, name, category, asset_code, import_date, quantity, unit,
-            image, created_at, updated_at
-     FROM products
-     WHERE id = ?`,
+    `SELECT p.id, p.qr_code, p.name, p.category, p.asset_code, p.import_date, p.quantity, p.unit,
+            p.image, p.created_at, p.updated_at, p.created_by,
+            u.display_name AS created_by_name, u.username AS created_by_username
+     FROM products p
+     LEFT JOIN users u ON u.id = p.created_by
+     WHERE p.id = ?`,
     [id],
   );
   return rows[0] ?? null;
@@ -58,6 +62,7 @@ export const createProduct = async (payload) => {
     quantity,
     unit,
     image,
+    createdBy,
   } = payload;
 
   // ✅ ป้องกัน undefined → แปลงเป็น null
@@ -69,6 +74,7 @@ export const createProduct = async (payload) => {
   const safeQuantity = quantity ?? 0;
   const safeUnit = unit ?? null;
   const safeImage = image ?? null;
+  const safeCreatedBy = createdBy ?? null;
 
   const connection = await getConnection();
   try {
@@ -76,8 +82,8 @@ export const createProduct = async (payload) => {
 
     const [result] = await connection.execute(
       `INSERT INTO products
-        (qr_code, name, category, asset_code, import_date, quantity, unit, image, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+        (qr_code, name, category, asset_code, import_date, quantity, unit, image, created_by, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
       [
         safeQrCode,
         safeName,
@@ -87,14 +93,17 @@ export const createProduct = async (payload) => {
         safeQuantity,
         safeUnit,
         safeImage,
+        safeCreatedBy,
       ],
     );
 
     const [inserted] = await connection.execute(
-      `SELECT id, qr_code, name, category, asset_code, import_date, quantity, unit,
-              image, created_at, updated_at
-       FROM products
-       WHERE id = ?`,
+      `SELECT p.id, p.qr_code, p.name, p.category, p.asset_code, p.import_date, p.quantity, p.unit,
+              p.image, p.created_at, p.updated_at, p.created_by,
+              u.display_name AS created_by_name, u.username AS created_by_username
+       FROM products p
+       LEFT JOIN users u ON u.id = p.created_by
+       WHERE p.id = ?`,
       [result.insertId],
     );
 
@@ -116,6 +125,7 @@ export const updateProduct = async (id, payload) => {
   const columnAlias = {
     assetCode: 'asset_code',
     importDate: 'import_date',
+    createdBy: 'created_by',
   };
 
   Object.entries(payload).forEach(([key, value]) => {

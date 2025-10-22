@@ -9,6 +9,9 @@ import dotenv from 'dotenv';
 import productRoutes from './routes/products.js';
 import transactionRoutes from './routes/transactions.js';
 import exportRoutes from './routes/exports.js';
+import authRoutes from './routes/auth.js';
+import userRoutes from './routes/users.js';
+import { attachUser } from './middleware/auth.js';
 
 dotenv.config();
 
@@ -40,6 +43,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+app.use(attachUser);
 
 app.use('/uploads/images', express.static(path.join(__dirname, 'uploads/images')));
 app.use('/uploads/qrcodes', express.static(path.join(__dirname, 'uploads/qrcodes')));
@@ -49,6 +53,8 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/export', exportRoutes);

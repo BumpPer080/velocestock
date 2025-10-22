@@ -13,6 +13,8 @@ import {
   deleteProduct,
   getDashboardSummary,
 } from '../models/productModel.js';
+import { recordProductActivity, listProductActivities } from '../models/activityModel.js';
+import { requireAuth, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
@@ -64,6 +66,20 @@ router.get('/summary', async (req, res, next) => {
   }
 });
 
+router.get('/activity', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const { productId, action, limit } = req.query;
+    const activities = await listProductActivities({
+      productId: productId ? Number(productId) : undefined,
+      action,
+      limit: limit ? Number(limit) : undefined,
+    });
+    res.json(activities);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/:id', async (req, res, next) => {
   try {
     const product = await findProductById(req.params.id);
@@ -95,7 +111,7 @@ router.get('/:id/qrcode', async (req, res, next) => {
   }
 });
 
-router.post('/', upload.single('image'), async (req, res, next) => {
+router.post('/', requireAuth, upload.single('image'), async (req, res, next) => {
   try {
     const {
       name,
@@ -126,9 +142,20 @@ router.post('/', upload.single('image'), async (req, res, next) => {
       quantity: numericQuantity,
       unit,
       image: imageName,
+      createdBy: req.user.id,
     });
 
     await ensureQrForProduct(product.id, qrCode);
+    await recordProductActivity({
+      productId: product.id,
+      userId: req.user.id,
+      action: 'create',
+      details: JSON.stringify({
+        name,
+        assetCode,
+        quantity: numericQuantity,
+      }),
+    });
 
     res.status(201).json(product);
   } catch (error) {
@@ -136,7 +163,7 @@ router.post('/', upload.single('image'), async (req, res, next) => {
   }
 });
 
-router.put('/:id', upload.single('image'), async (req, res, next) => {
+router.put('/:id', requireAuth, upload.single('image'), async (req, res, next) => {
   try {
     const updates = {
       name: req.body.name,
@@ -157,19 +184,44 @@ router.put('/:id', upload.single('image'), async (req, res, next) => {
       return;
     }
 
+    const changedFields = Object.entries(updates).reduce((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+
+    if (Object.keys(changedFields).length) {
+      await recordProductActivity({
+        productId: product.id,
+        userId: req.user.id,
+        action: 'update',
+        details: JSON.stringify({ updatedFields: changedFields }),
+      });
+    }
+
     res.json(product);
   } catch (error) {
     next(error);
   }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requireAuth, async (req, res, next) => {
   try {
     const product = await findProductById(req.params.id);
     if (!product) {
       res.status(404).json({ message: 'Product not found' });
       return;
     }
+    await recordProductActivity({
+      productId: product.id,
+      userId: req.user.id,
+      action: 'delete',
+      details: JSON.stringify({
+        name: product.name,
+        assetCode: product.asset_code,
+      }),
+    });
     await deleteProduct(req.params.id);
     res.status(204).end();
   } catch (error) {

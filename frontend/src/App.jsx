@@ -1,18 +1,44 @@
-import { useState } from 'react';
-import { NavLink, Route, Routes } from 'react-router-dom';
-import { FiBarChart2, FiBox, FiMenu, FiPackage } from 'react-icons/fi';
+import { useMemo, useState } from 'react';
+import {
+  Navigate,
+  NavLink,
+  Route,
+  Routes,
+  Outlet,
+} from 'react-router-dom';
+import {
+  FiBarChart2,
+  FiBox,
+  FiActivity,
+  FiLogOut,
+  FiMenu,
+  FiPackage,
+  FiUsers,
+} from 'react-icons/fi';
 import Dashboard from './pages/Dashboard.jsx';
 import Products from './pages/Products.jsx';
 import Reports from './pages/Reports.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Login from './pages/Login.jsx';
+import { useAuth } from './context/AuthContext.jsx';
+import ProductActivity from './pages/ProductActivity.jsx';
+import UserManagement from './pages/UserManagement.jsx';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: FiBox, end: true },
   { to: '/products', label: 'Products', icon: FiPackage },
   { to: '/reports', label: 'Reports', icon: FiBarChart2 },
+  { to: '/activity', label: 'Activity', icon: FiActivity, adminOnly: true },
+  { to: '/users', label: 'Users', icon: FiUsers, adminOnly: true },
 ];
 
-function App() {
+function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const navItems = useMemo(
+    () => NAV_ITEMS.filter((item) => !item.adminOnly || user?.role === 'admin'),
+    [user?.role],
+  );
 
   const renderLink = ({ to, label, icon: Icon, end }) => (
     <NavLink
@@ -55,17 +81,31 @@ function App() {
           <div className="navbar-center hidden lg:flex">
             <nav>
               <ul className="menu menu-horizontal gap-2 text-sm">
-                {NAV_ITEMS.map((item) => (
+                {navItems.map((item) => (
                   <li key={item.to}>{renderLink(item)}</li>
                 ))}
               </ul>
             </nav>
           </div>
-          {/* <div className="navbar-end">
-            <div className="rounded-full bg-primary/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-              Orange &amp; Black Crew
+          <div className="navbar-end flex items-center gap-3">
+            <div className="hidden text-right uppercase tracking-wide text-secondary-content/80 lg:block">
+              <div className="text-[10px]">Signed in as</div>
+              <div className="text-xs font-semibold text-secondary-content">
+                {user?.displayName || user?.username}
+              </div>
             </div>
-          </div> */}
+            <button
+              type="button"
+              className="btn btn-outline btn-sm gap-2 border-secondary border-opacity-40 text-secondary-content hover:border-primary hover:text-primary"
+              onClick={() => {
+                logout();
+                setIsMenuOpen(false);
+              }}
+            >
+              <FiLogOut className="text-base" />
+              Logout
+            </button>
+          </div>
         </div>
         <div
           className={`bg-secondary/95 px-4 pb-4 text-secondary-content transition-all duration-300 ease-out lg:hidden ${
@@ -73,26 +113,55 @@ function App() {
           }`}
         >
           <div className="flex flex-col gap-2">
-            {NAV_ITEMS.map((item) => (
+            <div className="text-xs uppercase tracking-widest text-secondary-content/60">
+              {user?.displayName || user?.username}
+            </div>
+            {navItems.map((item) => (
               <div key={item.to}>{renderLink(item)}</div>
             ))}
+            <button
+              type="button"
+              className="btn btn-outline btn-sm gap-2 border-secondary border-opacity-40 text-secondary-content hover:border-primary hover:text-primary"
+              onClick={() => {
+                logout();
+                setIsMenuOpen(false);
+              }}
+            >
+              <FiLogOut className="text-base" />
+              Logout
+            </button>
           </div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/reports" element={<Reports />} />
-        </Routes>
+        <Outlet />
       </main>
       <footer className="border-t border-base-300 bg-base-100 py-6 text-sm text-base-content/70">
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-2 px-4 text-center sm:flex-row sm:text-left">
-          <span>© {new Date().getFullYear()} VeloceStock Inventory .</span>
+          <span>© {new Date().getFullYear()} VeloceStock Inventory.</span>
           <span className="uppercase tracking-widest text-primary">Bostech Innovation company limited</span>
         </div>
       </footer>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/activity" element={<ProductActivity />} />
+          <Route path="/users" element={<UserManagement />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Route>
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
   );
 }
 
