@@ -26,10 +26,10 @@ import UserManagement from './pages/UserManagement.jsx';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: FiBox, end: true },
-  { to: '/products', label: 'Products', icon: FiPackage },
-  { to: '/reports', label: 'Reports', icon: FiBarChart2 },
-  { to: '/activity', label: 'Activity', icon: FiActivity, adminOnly: true },
-  { to: '/users', label: 'Users', icon: FiUsers, adminOnly: true },
+  { to: '/products', label: 'สินค้า', icon: FiPackage },
+  { to: '/reports', label: 'รายงาน', icon: FiBarChart2 },
+  { to: '/activity', label: 'ประวัติกิจกรรม', icon: FiActivity, adminOnly: true },
+  { to: '/users', label: 'จัดการผู้ใช้', icon: FiUsers, adminOnly: true },
 ];
 
 function Layout() {
@@ -89,7 +89,7 @@ function Layout() {
           </div>
           <div className="navbar-end flex items-center gap-3">
             <div className="hidden text-right uppercase tracking-wide text-secondary-content/80 lg:block">
-              <div className="text-[10px]">Signed in as</div>
+              <div className="text-[10px]">เข้าสู่ระบบโดย</div>
               <div className="text-xs font-semibold text-secondary-content">
                 {user?.displayName || user?.username}
               </div>

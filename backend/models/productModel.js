@@ -184,29 +184,3 @@ export const getDashboardSummary = async () => {
     recentProducts: recent,
   };
 };
-
-export const adjustProductQuantity = async (productId, adjustment) => {
-  const connection = await getConnection();
-  try {
-    await connection.beginTransaction();
-    await connection.execute(
-      `UPDATE products
-       SET quantity = quantity + ?, updated_at = NOW()
-       WHERE id = ?`,
-      [adjustment, productId],
-    );
-    const [rows] = await connection.execute(
-      `SELECT id, quantity
-       FROM products
-       WHERE id = ?`,
-      [productId],
-    );
-    await connection.commit();
-    return rows[0];
-  } catch (error) {
-    await connection.rollback();
-    throw error;
-  } finally {
-    connection.release();
-  }
-};

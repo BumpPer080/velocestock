@@ -10,7 +10,6 @@
     "lint": "eslint . --ext .js",
     "test": "jest --runInBand",
     "export:excel": "node scripts/exportExcel.js",
-    "export:pdf": "node scripts/exportPdf.js",
     "seed": "node scripts/seed.js"
   },
   "dependencies": {
@@ -23,7 +22,6 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.9.7",
-    "pdfkit": "^0.13.0",
     "qrcode": "^1.5.3"
   },
   "devDependencies": {

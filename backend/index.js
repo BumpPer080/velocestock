@@ -7,7 +7,6 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 
 import productRoutes from './routes/products.js';
-import transactionRoutes from './routes/transactions.js';
 import exportRoutes from './routes/exports.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
@@ -56,7 +55,6 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/transactions', transactionRoutes);
 app.use('/api/export', exportRoutes);
 
 app.use((err, req, res, _next) => {

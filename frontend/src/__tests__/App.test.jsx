@@ -13,7 +13,6 @@ describe('App', () => {
 
     expect(screen.getByText(/dashboard/i)).toBeInTheDocument();
     expect(screen.getByText(/products/i)).toBeInTheDocument();
-    expect(screen.getByText(/reports/i)).toBeInTheDocument();
+    expect(screen.getByText('รายงาน')).toBeInTheDocument();
   });
 });
-

@@ -30,7 +30,6 @@ const run = async () => {
   const connection = await getConnection();
   try {
     await connection.beginTransaction();
-    await connection.query('DELETE FROM transactions');
     await connection.query('DELETE FROM products');
     await Promise.all(
       sampleProducts.map((product) => connection.query(
