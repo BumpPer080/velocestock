@@ -111,6 +111,24 @@ router.get('/:id/qrcode', async (req, res, next) => {
   }
 });
 
+router.get('/:id/image', async (req, res, next) => {
+  try {
+    const product = await findProductById(req.params.id);
+    if (!product || !product.image) {
+      res.status(404).json({ message: 'Product image not found' });
+      return;
+    }
+    const filePath = path.join(imagesDir, product.image);
+    if (!fs.existsSync(filePath)) {
+      res.status(404).json({ message: 'Product image not found' });
+      return;
+    }
+    res.sendFile(filePath);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post('/', requireAuth, upload.single('image'), async (req, res, next) => {
   try {
     const {

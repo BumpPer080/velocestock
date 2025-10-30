@@ -172,7 +172,7 @@ export const getDashboardSummary = async () => {
   );
 
   const recent = await query(
-    `SELECT id, name, quantity, unit, created_at
+    `SELECT id, name, quantity, unit, image, created_at
      FROM products
      ORDER BY created_at DESC
      LIMIT 5`,

@@ -13,6 +13,11 @@ function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const handleViewImage = (productId) => {
+    if (!productId) return;
+    window.open(`/api/products/${productId}/image`, '_blank', 'noopener');
+  };
+
   useEffect(() => {
     const fetchSummary = async () => {
       setIsLoading(true);
@@ -111,13 +116,14 @@ function Dashboard() {
                 <tr className="text-xs uppercase tracking-wide text-base-content/70 ">
                   <th className="bg-base-200">ชื่อสินค้า</th>
                   <th className="bg-base-200">จำนวนสินค้าในคลัง</th>
+                  <th className="bg-base-200">รูปภาพ</th>
                   <th className="bg-base-200">วันที่เพิ่ม</th>
                 </tr>
               </thead>
               <tbody>
                 {summary.recentProducts.length === 0 && (
                   <tr>
-                    <td className="py-6 text-center text-sm text-base-content/60" colSpan={3}>
+                    <td className="py-6 text-center text-sm text-base-content/60" colSpan={4}>
                       ไม่มีสินค้าที่เพิ่มเข้ามาล่าสุด.
                     </td>
                   </tr>
@@ -127,6 +133,19 @@ function Dashboard() {
                     <td className="font-medium text-base-content/90">{product.name}</td>
                     <td className="text-base-content/80">
                       {product.quantity} {product.unit}
+                    </td>
+                    <td className="text-base-content/80">
+                      {product.image ? (
+                        <button
+                          type="button"
+                          onClick={() => handleViewImage(product.id)}
+                          className="btn btn-outline btn-xs text-primary"
+                        >
+                          ดูรูป
+                        </button>
+                      ) : (
+                        <span className="text-base-content/40">ไม่มีรูป</span>
+                      )}
                     </td>
                     <td className="text-base-content/60">
                       {new Date(product.created_at).toLocaleString()}
