@@ -20,13 +20,13 @@ router.post('/login', async (req, res, next) => {
 
     const user = await findUserWithPasswordByUsername(username);
     if (!user) {
-      res.status(401).json({ message: 'Invalid credentials' });
+      res.status(401).json({ message: 'ไม่พบบัญชีผู้ใช้' });
       return;
     }
 
     const isValid = await bcrypt.compare(password, user.passwordHash);
     if (!isValid) {
-      res.status(401).json({ message: 'Invalid credentials' });
+      res.status(401).json({ message: 'ไม่พบบัญชีผู้ใช้' });
       return;
     }
 
