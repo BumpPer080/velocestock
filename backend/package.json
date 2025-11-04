@@ -8,7 +8,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "lint": "eslint . --ext .js",
-    "test": "jest --runInBand",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
     "export:excel": "node scripts/exportExcel.js",
     "seed": "node scripts/seed.js"
   },

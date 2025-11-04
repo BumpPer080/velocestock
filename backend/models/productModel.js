@@ -1,5 +1,13 @@
 import { query, getConnection } from './db.js';
 
+const PRODUCT_SELECT = `
+  SELECT p.id, p.qr_code, p.name, p.category, p.asset_code, p.import_date, p.quantity, p.unit,
+         p.image, p.created_at, p.updated_at, p.created_by,
+         u.display_name AS created_by_name, u.username AS created_by_username
+  FROM products p
+  LEFT JOIN users u ON u.id = p.created_by
+`;
+
 export const listProducts = async (filters = {}) => {
   const clauses = [];
   const params = [];
@@ -27,11 +35,7 @@ export const listProducts = async (filters = {}) => {
 
   const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
   const sql = `
-    SELECT p.id, p.qr_code, p.name, p.category, p.asset_code, p.import_date, p.quantity, p.unit,
-           p.image, p.created_at, p.updated_at, p.created_by,
-           u.display_name AS created_by_name, u.username AS created_by_username
-    FROM products p
-    LEFT JOIN users u ON u.id = p.created_by
+    ${PRODUCT_SELECT}
     ${where}
     ORDER BY p.created_at DESC
   `;
@@ -41,14 +45,34 @@ export const listProducts = async (filters = {}) => {
 
 export const findProductById = async (id) => {
   const rows = await query(
-    `SELECT p.id, p.qr_code, p.name, p.category, p.asset_code, p.import_date, p.quantity, p.unit,
-            p.image, p.created_at, p.updated_at, p.created_by,
-            u.display_name AS created_by_name, u.username AS created_by_username
-     FROM products p
-     LEFT JOIN users u ON u.id = p.created_by
+    `${PRODUCT_SELECT}
      WHERE p.id = ?`,
     [id],
   );
+  return rows[0] ?? null;
+};
+
+export const findProductByQr = async (qrCode) => {
+  if (!qrCode) return null;
+
+  // 🧩 Debug section — ใช้เพื่อตรวจสอบว่า backend ต่อกับฐานข้อมูลใด และ query เจอหรือไม่
+  try {
+    const [dbInfo] = await query('SELECT DATABASE() AS currentDb');
+    //console.log('🗄️  Connected Database:', dbInfo.currentDb);
+  } catch (err) {
+    //console.warn('⚠️  Cannot detect current database:', err.message);
+  }
+
+  console.log('🔍 Searching QR:', qrCode);
+
+  const rows = await query(
+    `${PRODUCT_SELECT}
+     WHERE p.qr_code = ?`,
+    [qrCode.trim()],
+  );
+
+  //console.log('📊 Rows found:', rows.length);
+
   return rows[0] ?? null;
 };
 
@@ -65,7 +89,7 @@ export const createProduct = async (payload) => {
     createdBy,
   } = payload;
 
-  // ✅ ป้องกัน undefined → แปลงเป็น null
+  // ป้องกัน undefined → แปลงเป็น null
   const safeQrCode = qrCode ?? null;
   const safeName = name ?? null;
   const safeCategory = category ?? null;
@@ -98,11 +122,7 @@ export const createProduct = async (payload) => {
     );
 
     const [inserted] = await connection.execute(
-      `SELECT p.id, p.qr_code, p.name, p.category, p.asset_code, p.import_date, p.quantity, p.unit,
-              p.image, p.created_at, p.updated_at, p.created_by,
-              u.display_name AS created_by_name, u.username AS created_by_username
-       FROM products p
-       LEFT JOIN users u ON u.id = p.created_by
+      `${PRODUCT_SELECT}
        WHERE p.id = ?`,
       [result.insertId],
     );
@@ -116,7 +136,6 @@ export const createProduct = async (payload) => {
     connection.release();
   }
 };
-
 
 export const updateProduct = async (id, payload) => {
   const fields = [];

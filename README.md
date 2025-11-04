@@ -76,6 +76,17 @@ CREATE TABLE product_activity_logs (
   CONSTRAINT fk_product_activity_product FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE SET NULL,
   CONSTRAINT fk_product_activity_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
 );
+
+CREATE TABLE product_checkouts (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  product_id INT NOT NULL,
+  user_id INT,
+  quantity INT NOT NULL,
+  notes TEXT,
+  created_at DATETIME NOT NULL,
+  CONSTRAINT fk_product_checkouts_product FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE,
+  CONSTRAINT fk_product_checkouts_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
+);
 ```
 
 After creating at least one admin user (e.g. via manual `INSERT` with a bcrypt hash), log in and re-save existing products to backfill `created_by`.
@@ -88,9 +99,14 @@ ALTER TABLE product_activity_logs
 ```
 This keeps historical activity even after products are removed.
 
-### Product Activity Audit (admin-only)
-- `GET /api/products/activity` returns recent create/update/delete events with the actor name and role.
-- New React page `ProductActivity.jsx` lets admins review the audit trail with search and action filters (by default the navigation item appears only for `admin` users).
+## Feature Highlights
+- **Checkout (staff QR)**
+  - `GET /api/checkouts/lookup` verifies a product by QR code and returns real-time stock information (role: `staff`).
+  - `POST /api/checkouts` performs a transactional stock deduction, records the checkout, and appends a `checkout` entry to `product_activity_logs` (role: `staff`).
+  - Frontend route `/checkout` exposes a QR scanner + manual form for staff to scan QR codes or enter them manually before confirming the quantity and optional notes.
+- **Product Activity Audit (admin-only)**
+  - `GET /api/products/activity` returns recent create/update/delete/checkout events with the actor name and role.
+  - React page `ProductActivity.jsx` lets admins review the audit trail with search and action filters (by default the navigation item appears only for `admin` users).
 
 ## Testing
 ```bash

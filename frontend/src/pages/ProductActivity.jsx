@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+﻿import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   FiAlertCircle,
   FiFilter,
@@ -13,6 +13,7 @@ const ACTION_LABELS = {
   create: 'สร้างสินค้า',
   update: 'แก้ไขสินค้า',
   delete: 'ลบสินค้า',
+  checkout: 'เบิกสินค้า',
 };
 
 const parseDetails = (details) => {
@@ -29,6 +30,17 @@ const describeDetails = (activity) => {
   if (!parsed) return '—';
 
   if (typeof parsed === 'string') return parsed;
+
+  if (typeof parsed.quantity === 'number') {
+    const parts = [`เบิก ${parsed.quantity}`];
+    if (parsed.remainingQuantity !== undefined) {
+      parts.push(`คงเหลือ ${parsed.remainingQuantity}`);
+    }
+    if (parsed.notes) {
+      parts.push(`หมายเหตุ: ${parsed.notes}`);
+    }
+    return parts.join(' • ');
+  }
 
   if (parsed.updatedFields) {
     return Object.entries(parsed.updatedFields)
@@ -221,7 +233,7 @@ function ProductActivity() {
                         )}
                       </td>
                       <td>
-                        <span className="badge badge-outline border-primary/40 text-primary">
+                        <span className=" text-primary">
                           {ACTION_LABELS[activity.action] || activity.action}
                         </span>
                       </td>
@@ -245,4 +257,3 @@ function ProductActivity() {
 }
 
 export default ProductActivity;
-

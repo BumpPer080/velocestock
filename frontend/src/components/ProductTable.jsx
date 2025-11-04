@@ -27,7 +27,7 @@ function ProductTable({ products, onEdit, onDelete, onViewQr }) {
             <tr key={product.id}>
               <td className="font-semibold text-base-content">{product.name}</td>
               <td>
-                <span className="badge badge-outline border-secondary border-opacity-30 bg-base-100 text-base-content">
+                <span className="link border-secondary border-opacity-30 bg-base-100 text-base-content">
                   {product.category || '—'}
                 </span>
               </td>

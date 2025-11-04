@@ -50,14 +50,22 @@ export const requireAuth = (req, res, next) => {
   next();
 };
 
-export const requireAdmin = (req, res, next) => {
+const createRoleGuard = (allowedRoles, message = 'Forbidden') => (req, res, next) => {
   if (!req.user) {
     res.status(401).json({ message: 'Authentication required' });
     return;
   }
-  if (req.user.role !== 'admin') {
-    res.status(403).json({ message: 'Admin role required' });
+
+  if (allowedRoles.length && !allowedRoles.includes(req.user.role)) {
+    res.status(403).json({ message });
     return;
   }
+
   next();
 };
+
+export const requireRole = (...allowedRoles) => createRoleGuard(allowedRoles);
+
+export const requireAdmin = createRoleGuard(['admin'], 'Admin role required');
+
+export const requireStaff = createRoleGuard(['staff'], 'Staff role required');

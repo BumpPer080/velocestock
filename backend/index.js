@@ -10,6 +10,7 @@ import productRoutes from './routes/products.js';
 import exportRoutes from './routes/exports.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
+import checkoutRoutes from './routes/checkouts.js';
 import { attachUser } from './middleware/auth.js';
 
 dotenv.config();
@@ -55,6 +56,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/checkouts', checkoutRoutes);
 app.use('/api/export', exportRoutes);
 
 app.use((err, req, res, _next) => {

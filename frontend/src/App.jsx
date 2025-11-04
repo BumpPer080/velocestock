@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import {
   Navigate,
   NavLink,
@@ -14,6 +14,7 @@ import {
   FiMenu,
   FiPackage,
   FiUsers,
+  FiCamera,
 } from 'react-icons/fi';
 import Dashboard from './pages/Dashboard.jsx';
 import Products from './pages/Products.jsx';
@@ -23,20 +24,27 @@ import Login from './pages/Login.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import ProductActivity from './pages/ProductActivity.jsx';
 import UserManagement from './pages/UserManagement.jsx';
+import Checkout from './pages/Checkout.jsx';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: FiBox, end: true },
   { to: '/products', label: 'สินค้า', icon: FiPackage },
   { to: '/reports', label: 'รายงาน', icon: FiBarChart2 },
-  { to: '/activity', label: 'ประวัติกิจกรรม', icon: FiActivity, adminOnly: true },
-  { to: '/users', label: 'จัดการผู้ใช้', icon: FiUsers, adminOnly: true },
+  { to: '/checkout', label: 'เบิกสินค้า', icon: FiCamera, roles: ['staff'] },
+  { to: '/activity', label: 'ประวัติกิจกรรม', icon: FiActivity, roles: ['admin'] },
+  { to: '/users', label: 'จัดการผู้ใช้', icon: FiUsers, roles: ['admin'] },
 ];
 
 function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const navItems = useMemo(
-    () => NAV_ITEMS.filter((item) => !item.adminOnly || user?.role === 'admin'),
+    () =>
+      NAV_ITEMS.filter((item) => {
+        if (!item.roles || !item.roles.length) return true;
+        if (!user?.role) return false;
+        return item.roles.includes(user.role);
+      }),
     [user?.role],
   );
 
@@ -155,6 +163,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/products" element={<Products />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/activity" element={<ProductActivity />} />
           <Route path="/users" element={<UserManagement />} />
           <Route path="*" element={<Navigate to="/" replace />} />
